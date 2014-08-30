@@ -7,6 +7,7 @@ use Config;
 
 my $perlbin = $Config{perlpath};
 my $perlversion = $Config{version};
+my $siteprefix = $Config{siteprefix};
 my $core_lib =  $Config{archlib}.'/CORE/';
 my $use_threads = $Config{usethreads} ? '' : '--without-threads';
 my $LDFLAGS= '-L'.$core_lib;
@@ -45,7 +46,7 @@ my $builder = Alien::Base::ModuleBuild->new(
     #                      exact_filename => 'ImageMagick.tar.gz',
     #                     },
     alien_build_commands => [
-       'LDFLAGS='.$LDFLAGS.' %pconfigure --prefix=%s --with-perl='.$perlbin.' --enable-shared '.$use_threads ,
+       'LDFLAGS='.$LDFLAGS.' %pconfigure --prefix=%s --exec-prefix='.$siteprefix.' --with-perl='.$perlbin.' --enable-shared '.$use_threads ,
        'make'
     ],
     alien_install_commands => [
@@ -67,15 +68,15 @@ unless( $builder->config('useshrplib') eq 'true' ){
 **
 ** PLEASE READ THIS:
 **
-** Image Magic requires perl to be compiles with -Duseshrplib, but this perl
-** ($perlbin) is not compiled with it.
+** Image Magic requires perl to be built with -Duseshrplib, but this perl
+** ($perlbin) is not built with it.
 **
 ** This is because Image Magick Perl integration package (PerlMagick , providing Image::Magick)
-** can only compile with libperl.so, not libperl.a.
+** can only be linked against libperl.so, not libperl.a.
 **
 ** See http://www.imagemagick.org/discourse-server/viewtopic.php?f=7&t=25526
 **
-** -> If you are using a System Perl, this should be be alright,
+** -> If you are using a System Perl, this should be just fine,
 ** as they are usually compiled with -Duseshrplib. So if you see this,
 ** check with your distribution.
 **
